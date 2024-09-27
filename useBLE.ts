@@ -12,15 +12,15 @@ import {
   Device,
 } from "react-native-ble-plx";
 
-const DATA_SERVICE_UUID = "19b10000-e8f2-537e-4f6c-d104768a1214";
-const COLOR_CHARACTERISTIC_UUID = "19b10001-e8f2-537e-4f6c-d104768a1217";
+const DATA_SERVICE_UUID = "3a8128a5-a58b-477a-bf68-8b0462524aa7";
+const TENSION_CHARACTERISTIC_UUID = "3a8128a5-a58b-477a-bf68-8b0462524aa8";
 
 const bleManager = new BleManager();
 
 function useBLE() {
   const [allDevices, setAllDevices] = useState<Device[]>([]);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
-  const [color, setColor] = useState("white");
+  const [tension, setTension] = useState(0);
 
   const requestAndroid31Permissions = async () => {
     const bluetoothScanPermission = await PermissionsAndroid.request(
@@ -102,8 +102,9 @@ function useBLE() {
 
       if (
         device &&
-        (device.localName === "Arduino" || device.name === "Arduino")
+        (device.localName === "ESP32_BLE" || device.name === "ESP32_BLE")
       ) {
+
         setAllDevices((prevState: Device[]) => {
           if (!isDuplicteDevice(prevState, device)) {
             return [...prevState, device];
@@ -125,25 +126,16 @@ function useBLE() {
       return;
     }
 
-    const colorCode = base64.decode(characteristic.value);
+    const tension = parseInt(base64.decode(characteristic.value));
 
-    let color = "white";
-    if (colorCode === "B") {
-      color = "blue";
-    } else if (colorCode === "R") {
-      color = "red";
-    } else if (colorCode === "G") {
-      color = "green";
-    }
-
-    setColor(color);
+    setTension(tension);
   };
 
   const startStreamingData = async (device: Device) => {
     if (device) {
       device.monitorCharacteristicForService(
         DATA_SERVICE_UUID,
-        COLOR_CHARACTERISTIC_UUID,
+        TENSION_CHARACTERISTIC_UUID,
         onDataUpdate
       );
     } else {
@@ -155,7 +147,7 @@ function useBLE() {
     connectToDevice,
     allDevices,
     connectedDevice,
-    color,
+    tension,
     requestPermissions,
     scanForPeripherals,
     startStreamingData,
