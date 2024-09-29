@@ -65,11 +65,15 @@ const DeviceModal: FC<DeviceModalProps> = (props) => {
       animationType="slide"
       transparent={false}
       visible={visible}
+      onRequestClose={closeModal}
     >
       <SafeAreaView style={modalStyle.modalTitle}>
         <Text style={modalStyle.modalTitleText}>
           Tap on a device to connect
         </Text>
+        {devices.length === 0 && (
+          <Text style={modalStyle.modalListText}>No devices found</Text>
+        )}
         <FlatList
           contentContainerStyle={modalStyle.modalFlatlistContiner}
           data={devices}
@@ -108,8 +112,14 @@ const modalStyle = StyleSheet.create({
     marginHorizontal: 20,
     textAlign: "center",
   },
+  modalListText: {
+    marginTop: 40,
+    fontSize: 25,
+    marginHorizontal: 20,
+    textAlign: "center",
+  },
   ctaButton: {
-    backgroundColor: "#FF6060",
+    backgroundColor: "#eaab2d",
     justifyContent: "center",
     alignItems: "center",
     height: 50,

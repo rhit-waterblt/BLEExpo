@@ -1,6 +1,5 @@
 // BluetoothConnectionScreen.tsx
 import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
 import {
   SafeAreaView,
   StyleSheet,
@@ -13,32 +12,23 @@ import {
 import DeviceModal from "./DeviceConnectionModal";
 import { RootStackParamList } from "./App";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import useBLE from "./useBLE";
 
 type BLEProps = NativeStackScreenProps<
   RootStackParamList,
   "BluetoothConnectionScreen"
 >;
 
-export interface BluetoothConnectionScreenProps {
-  connectedDevice: any; // Replace 'any' with the appropriate type
-  connectToDevice: (device: any) => void; // Replace 'any' with the appropriate type
-  allDevices: any[]; // Replace 'any' with the appropriate
-  requestPermissions: () => Promise<boolean>;
-  scanForPeripherals: () => void;
-}
-
 const BluetoothConnectionScreen = (props: BLEProps) => {
-  if (!props || !props.route || !props.route.params) {
-    throw new Error("Props or route parameters are undefined");
-  }
-
   const {
+    allDevices,
     connectedDevice,
     connectToDevice,
-    allDevices,
     requestPermissions,
     scanForPeripherals,
-  } = props.route.params;
+  } = useBLE();
+
+  // console.log("connectedDevice", connectedDevice);
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
@@ -98,13 +88,14 @@ const BluetoothConnectionScreen = (props: BLEProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight,
+    // marginTop: StatusBar.currentHeight,
     backgroundColor: "#f2f2f2",
   },
   heartRateTitleWrapper: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    height: 300,
   },
   heartRateTitleText: {
     fontSize: 30,
@@ -118,7 +109,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   ctaButton: {
-    backgroundColor: "#FF6060",
+    backgroundColor: "#eaab2d",
     justifyContent: "center",
     alignItems: "center",
     height: 50,

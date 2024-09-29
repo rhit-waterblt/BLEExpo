@@ -2,37 +2,14 @@
 import React from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import TensionDisplay from "./TensionDisplay";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "./App";
+import { useGlobalState } from "./GlobalState";
 
-type TensionProps = NativeStackScreenProps<
-  RootStackParamList,
-  "TensionDisplayScreen"
->;
+const TensionDisplayScreen = () => {
+  const { state } = useGlobalState();
 
-export interface TensionDisplayScreenProps {
-  tension: number;
-}
-
-const TensionDisplayScreen = (props: TensionProps) => {
-  let tension = props.route.params?.tension;
-  tension = tension ? tension : 0;
   return (
     <ScrollView style={styles.container}>
-      <TensionDisplay
-        tensions={[
-          tension,
-          tension,
-          tension,
-          tension,
-          tension,
-          tension,
-          tension,
-          tension,
-          tension,
-          tension,
-        ]}
-      />
+      <TensionDisplay tensions={state.tensions} />
     </ScrollView>
   );
 };

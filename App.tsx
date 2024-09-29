@@ -2,97 +2,48 @@ import React, { useState } from "react";
 import { StyleSheet, StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import BluetoothConnectionScreen, {
-  BluetoothConnectionScreenProps,
-} from "./BluetoothConnectionScreen";
-import TensionDisplayScreen, {
-  TensionDisplayScreenProps,
-} from "./TensionDisplayScreen";
+import BluetoothConnectionScreen from "./BluetoothConnectionScreen";
+import TensionDisplayScreen from "./TensionDisplayScreen";
 import HomeScreen from "./Home";
-import useBLE from "./useBLE";
+import { GlobalProvider } from "./GlobalState";
 
 export type RootStackParamList = {
-  BluetoothConnectionScreen: BluetoothConnectionScreenProps | undefined;
-  TensionDisplayScreen: TensionDisplayScreenProps | undefined;
+  BluetoothConnectionScreen: undefined;
+  TensionDisplayScreen: undefined;
   Home: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
-  const {
-    allDevices,
-    connectedDevice,
-    connectToDevice,
-    tension,
-    requestPermissions,
-    scanForPeripherals,
-  } = useBLE();
-
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen
-          name="BluetoothConnectionScreen"
-          component={BluetoothConnectionScreen}
-          initialParams={{
-            connectedDevice,
-            connectToDevice,
-            allDevices,
-            requestPermissions,
-            scanForPeripherals,
-          }}
-        />
-        <Stack.Screen
-          name="TensionDisplayScreen"
-          component={TensionDisplayScreen}
-          initialParams={{ tension }}
-        />
-        {/* <SafeAreaView style={[styles.container, { backgroundColor: "white" }]}>
-          <ScrollView> */}
-        {/* <View style={styles.heartRateTitleWrapper}>
-              {connectedDevice ? (
-                <>
-                  <Text style={styles.heartRateTitleText}>Connected</Text>
-                </>
-              ) : (
-                <Text style={styles.heartRateTitleText}>
-                  Please connect to the ESP32 Master
-                </Text>
-              )}
-            </View>
-            {!connectedDevice && (
-              <TouchableOpacity onPress={openModal} style={styles.ctaButton}>
-                <Text style={styles.ctaButtonText}>Connect</Text>
-              </TouchableOpacity>
-            )}
-            <DeviceModal
-              closeModal={hideModal}
-              visible={isModalVisible}
-              connectToPeripheral={connectToDevice}
-              devices={allDevices}
-            /> */}
-        {/* {connectedDevice && (
-              <TensionDisplay
-                tensions={[
-                  tension,
-                  tension,
-                  tension,
-                  tension,
-                  tension,
-                  tension,
-                  tension,
-                  tension,
-                  tension,
-                  tension,
-                ]}
-              />
-            )} */}
-        {/* </ScrollView>
-        </SafeAreaView> */}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <GlobalProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{
+              title: "Real-Time Load Monitoring",
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="BluetoothConnectionScreen"
+            component={BluetoothConnectionScreen}
+            options={{
+              title: "Bluetooth Configuration",
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="TensionDisplayScreen"
+            component={TensionDisplayScreen}
+            options={{ title: "Active Readings", headerTitleAlign: "center" }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GlobalProvider>
   );
 };
 
