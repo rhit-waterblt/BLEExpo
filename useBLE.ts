@@ -6,7 +6,8 @@ import { useGlobalState } from "./GlobalState";
 import * as ExpoDevice from "expo-device";
 import { Buffer } from "buffer";
 
-import base64 from "react-native-base64";
+import * as FileSystem from "expo-file-system";
+
 import {
   BleError,
   BleManager,
@@ -18,6 +19,8 @@ const DATA_SERVICE_UUID = "3a8128a5-a58b-477a-bf68-8b0462524aa7";
 const TENSION_CHARACTERISTIC_UUID = "3a8128a5-a58b-477a-bf68-8b0462524aa8";
 
 const bleManager = new BleManager();
+
+const fileUri = FileSystem.documentDirectory + "ble_data.json";
 
 function useBLE() {
   const [allDevices, setAllDevices] = useState<Device[]>([]);
@@ -89,6 +92,11 @@ function useBLE() {
       await deviceConnection.discoverAllServicesAndCharacteristics();
       bleManager.stopDeviceScan();
 
+      const updateConnectedDevice = (device: Device) => {
+        dispatch({ type: "SET_CONNECTED_DEVICE", payload: device });
+      };
+
+      updateConnectedDevice(deviceConnection);
       startStreamingData(deviceConnection);
     } catch (e) {
       console.log("FAILED TO CONNECT", e);
@@ -116,6 +124,25 @@ function useBLE() {
         });
       }
     });
+
+  const saveDataToFile = async (data: {
+    mac: string;
+    tension: number;
+    timestamp: Date;
+  }) => {
+    try {
+      const existingData = await FileSystem.readAsStringAsync(fileUri).catch(
+        () => "[]"
+      );
+      const parsedData = JSON.parse(existingData);
+      parsedData.push(data);
+
+      await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(parsedData));
+      // console.log("Data saved to file:", parsedData);
+    } catch (error) {
+      console.error("Error saving data to file:", error);
+    }
+  };
 
   const onDataUpdate = (
     error: BleError | null,
@@ -163,6 +190,9 @@ function useBLE() {
     // setTension(tension);
     updateTension(tensionNumber);
     updateStrapMacs(mac, tensionNumber);
+
+    // Save the reading to device
+    saveDataToFile({ mac, tension: tensionNumber, timestamp: new Date() });
   };
 
   const startStreamingData = async (device: Device) => {

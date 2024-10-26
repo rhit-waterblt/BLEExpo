@@ -4,6 +4,36 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./App";
 
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+const fileUri = FileSystem.documentDirectory + "ble_data.json";
+
+const downloadFile = async () => {
+  const fileUri = FileSystem.documentDirectory + "ble_data.json";
+  try {
+    // Ensure the file exists
+    const fileInfo = await FileSystem.getInfoAsync(fileUri);
+
+    if (fileInfo.exists) {
+      // Share or download the file
+      await Sharing.shareAsync(fileUri);
+    } else {
+      console.error("File does not exist.");
+    }
+  } catch (error) {
+    console.error("Error downloading file:", error);
+  }
+};
+
+const readDataFromFile = async () => {
+  try {
+    const data = await FileSystem.readAsStringAsync(fileUri);
+    console.log("Data from file:", JSON.parse(data));
+  } catch (error) {
+    console.error("Error reading data from file:", error);
+  }
+};
+
 const HomeScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -23,6 +53,9 @@ const HomeScreen = () => {
         style={styles.ctaButton}
       >
         <Text style={styles.ctaButtonText}>Go to Tension Display</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={downloadFile} style={styles.ctaButton}>
+        <Text style={styles.ctaButtonText}>Export Saved Data</Text>
       </TouchableOpacity>
     </View>
   );

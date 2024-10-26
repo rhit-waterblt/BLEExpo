@@ -13,6 +13,7 @@ import DeviceModal from "./DeviceConnectionModal";
 import { RootStackParamList } from "./App";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import useBLE from "./useBLE";
+import { useGlobalState } from "./GlobalState";
 
 type BLEProps = NativeStackScreenProps<
   RootStackParamList,
@@ -27,6 +28,8 @@ const BluetoothConnectionScreen = (props: BLEProps) => {
     requestPermissions,
     scanForPeripherals,
   } = useBLE();
+
+  const { state } = useGlobalState();
 
   // console.log("connectedDevice", connectedDevice);
 
@@ -59,9 +62,11 @@ const BluetoothConnectionScreen = (props: BLEProps) => {
     <SafeAreaView style={[styles.container, { backgroundColor: "white" }]}>
       <ScrollView>
         <View style={styles.heartRateTitleWrapper}>
-          {connectedDevice ? (
+          {state.connectedDevice ? (
             <>
-              <Text style={styles.heartRateTitleText}>Connected</Text>
+              <Text style={styles.heartRateTitleText}>
+                Connected to ESP32 Master
+              </Text>
             </>
           ) : (
             <Text style={styles.heartRateTitleText}>
@@ -69,7 +74,7 @@ const BluetoothConnectionScreen = (props: BLEProps) => {
             </Text>
           )}
         </View>
-        {!connectedDevice && (
+        {!state.connectedDevice && (
           <TouchableOpacity onPress={openModal} style={styles.ctaButton}>
             <Text style={styles.ctaButtonText}>Connect</Text>
           </TouchableOpacity>
