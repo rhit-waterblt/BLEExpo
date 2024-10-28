@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import { StyleSheet, StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import BluetoothConnectionScreen from "./BluetoothConnectionScreen";
-import TensionDisplayScreen from "./TensionDisplayScreen";
-import HomeScreen from "./Home";
-import { GlobalProvider } from "./GlobalState";
+
+import BluetoothConnectionScreen from "./screens/BluetoothConnectionScreen";
+import TensionDisplayScreen from "./screens/TensionDisplayScreen";
+import HomeScreen from "./screens/HomeScreen";
+import { GlobalProvider } from "./context/GlobalState";
 
 export type RootStackParamList = {
   BluetoothConnectionScreen: undefined;
   TensionDisplayScreen: undefined;
-  Home: undefined;
+  HomeScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -21,7 +22,7 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
-            name="Home"
+            name="HomeScreen"
             component={HomeScreen}
             options={{
               title: "Real-Time Load Monitoring",

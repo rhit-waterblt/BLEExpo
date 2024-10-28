@@ -1,8 +1,8 @@
 // TensionDisplayScreen.tsx
 import React from "react";
 import { StyleSheet, ScrollView } from "react-native";
-import TensionDisplay from "./TensionDisplay";
-import { useGlobalState } from "./GlobalState";
+import TensionDisplay from "../components/TensionDisplay";
+import { useGlobalState } from "../context/GlobalState";
 
 const TensionDisplayScreen = () => {
   const { state } = useGlobalState();

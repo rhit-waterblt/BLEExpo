@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "./App";
+import { RootStackParamList } from "../App";
 
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
@@ -40,7 +40,10 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Image source={require("./straptechlogo.jpg")} style={styles.logo} />
+      <Image
+        source={require("../assets/straptechlogo.jpg")}
+        style={styles.logo}
+      />
       <Text style={styles.title}>StrapTech</Text>
       <TouchableOpacity
         onPress={() => navigation.navigate("BluetoothConnectionScreen")}

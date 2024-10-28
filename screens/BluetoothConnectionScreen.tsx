@@ -9,11 +9,11 @@ import {
   StatusBar,
   ScrollView,
 } from "react-native";
-import DeviceModal from "./DeviceConnectionModal";
-import { RootStackParamList } from "./App";
+import DeviceModal from "../components/DeviceConnectionModal";
+import { RootStackParamList } from "../App";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import useBLE from "./useBLE";
-import { useGlobalState } from "./GlobalState";
+import useBLE from "../hooks/useBLE";
+import { useGlobalState } from "../context/GlobalState";
 
 type BLEProps = NativeStackScreenProps<
   RootStackParamList,

@@ -1,4 +1,4 @@
-package com.wa2goose.BLEExpoBlog
+package com.wa2goose.StrapTech
 
 import android.app.Application
 import android.content.res.Configuration

@@ -109,9 +109,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.wa2goose.BLEExpoBlog'
+    namespace 'com.wa2goose.StrapTech'
     defaultConfig {
-        applicationId 'com.wa2goose.BLEExpoBlog'
+        applicationId 'com.wa2goose.StrapTech'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

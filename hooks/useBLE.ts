@@ -1,7 +1,7 @@
 /* eslint-disable no-bitwise */
 import { useMemo, useState } from "react";
 import { PermissionsAndroid, Platform } from "react-native";
-import { useGlobalState } from "./GlobalState";
+import { useGlobalState } from "../context/GlobalState";
 
 import * as ExpoDevice from "expo-device";
 import { Buffer } from "buffer";

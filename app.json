@@ -2,7 +2,7 @@
   "expo": {
     "name": "StrapTech",
     "slug": "straptech",
-    "version": "1.0.1",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/straptechlogo.png",
     "userInterfaceStyle": "light",
