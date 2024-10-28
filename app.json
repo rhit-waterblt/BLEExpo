@@ -4,7 +4,7 @@
     "slug": "straptech",
     "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/straptechlogo.jpg",
+    "icon": "./assets/straptechlogo.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
