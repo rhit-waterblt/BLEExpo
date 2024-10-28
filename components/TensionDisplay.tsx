@@ -35,16 +35,20 @@ const TensionTile: React.FC<TensionTileProps> = ({
 
 interface TensionDisplayProps {
   tensions: number[];
+  maxValue?: number;
 }
 
-const TensionDisplay: React.FC<TensionDisplayProps> = ({ tensions }) => (
+const TensionDisplay: React.FC<TensionDisplayProps> = ({
+  tensions,
+  maxValue = 2000,
+}) => (
   <View style={styles.container}>
     {tensions.map((tension, index) => (
       <TensionTile
         key={index}
         label={`Tension ${index + 1}`}
         value={tension}
-        maxValue={1000}
+        maxValue={maxValue}
       />
     ))}
   </View>

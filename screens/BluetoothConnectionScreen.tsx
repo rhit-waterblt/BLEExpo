@@ -1,4 +1,3 @@
-// BluetoothConnectionScreen.tsx
 import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
@@ -6,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  StatusBar,
   ScrollView,
 } from "react-native";
 import DeviceModal from "../components/DeviceConnectionModal";
@@ -30,9 +28,6 @@ const BluetoothConnectionScreen = (props: BLEProps) => {
   } = useBLE();
 
   const { state } = useGlobalState();
-
-  // console.log("connectedDevice", connectedDevice);
-
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   const scanForDevices = async () => {

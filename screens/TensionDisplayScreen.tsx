@@ -4,7 +4,15 @@ import { StyleSheet, ScrollView } from "react-native";
 import TensionDisplay from "../components/TensionDisplay";
 import { useGlobalState } from "../context/GlobalState";
 
-const TensionDisplayScreen = () => {
+import { RootStackParamList } from "../App";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
+type TensionProps = NativeStackScreenProps<
+  RootStackParamList,
+  "TensionDisplayScreen"
+>;
+
+const TensionDisplayScreen = (props: TensionProps) => {
   const { state } = useGlobalState();
 
   return (

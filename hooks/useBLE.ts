@@ -25,7 +25,6 @@ const fileUri = FileSystem.documentDirectory + "ble_data.json";
 function useBLE() {
   const [allDevices, setAllDevices] = useState<Device[]>([]);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
-  // const [tension, setTension] = useState(0);
 
   const { state, dispatch } = useGlobalState();
 
@@ -138,7 +137,6 @@ function useBLE() {
       parsedData.push(data);
 
       await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(parsedData));
-      // console.log("Data saved to file:", parsedData);
     } catch (error) {
       console.error("Error saving data to file:", error);
     }
@@ -156,29 +154,11 @@ function useBLE() {
       return;
     }
 
-    // const tension = parseInt(base64.decode(characteristic.value));
-
-    // console.log(characteristic.value);
-
-    // const jsonString = Buffer.from(characteristic.value, "base64").toString(
-    //   "utf-8"
-    // );
-
-    // console.log(jsonString);
-
-    // const data = JSON.parse(jsonString);
-
     const receivedString = Buffer.from(characteristic.value, "base64").toString(
       "utf-8"
     );
-    // console.log("Received String: ", receivedString);
     const [mac, tension] = receivedString.split(","); // Split by comma
-    // console.log(`MAC Address: ${mac}, Tension: ${tension}`);
     const tensionNumber = parseInt(tension);
-
-    const updateTension = (newTension: number) => {
-      dispatch({ type: "SET_TENSION", payload: newTension });
-    };
 
     const updateStrapMacs = (mac: string, newTension: number) => {
       dispatch({
@@ -187,10 +167,7 @@ function useBLE() {
       });
     };
 
-    // setTension(tension);
-    updateTension(tensionNumber);
     updateStrapMacs(mac, tensionNumber);
-
     // Save the reading to device
     saveDataToFile({ mac, tension: tensionNumber, timestamp: new Date() });
   };
@@ -211,7 +188,6 @@ function useBLE() {
     connectToDevice,
     allDevices,
     connectedDevice,
-    // tension,
     requestPermissions,
     scanForPeripherals,
     startStreamingData,

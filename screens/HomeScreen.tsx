@@ -3,9 +3,13 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
+type HomeProps = NativeStackScreenProps<RootStackParamList, "HomeScreen">;
 
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
+
 const fileUri = FileSystem.documentDirectory + "ble_data.json";
 
 const downloadFile = async () => {
@@ -34,7 +38,7 @@ const readDataFromFile = async () => {
   }
 };
 
-const HomeScreen = () => {
+const HomeScreen = (props: HomeProps) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
