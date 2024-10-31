@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useGlobalState } from "../context/GlobalState";
+import { Device } from "react-native-ble-plx";
+import { Buffer } from "buffer";
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, "HomeScreen">;
 
@@ -12,8 +15,25 @@ import * as Sharing from "expo-sharing";
 
 const fileUri = FileSystem.documentDirectory + "ble_data.json";
 
+const toggleMode = async (connectedDevice: Device, isBroadcast: Boolean) => {
+  const DATA_SERVICE_UUID = "3a8128a5-a58b-477a-bf68-8b0462524aa7";
+  const COMMAND_CHARACTERISTIC_UUID = "3a8128a5-a58b-477a-bf68-8b0462524aa9";
+
+  try {
+    const message = isBroadcast ? "STOP_BROADCAST" : "START_BROADCAST";
+    const encodedMessage = Buffer.from(message, "utf-8").toString("base64");
+
+    await connectedDevice.writeCharacteristicWithResponseForService(
+      DATA_SERVICE_UUID,
+      COMMAND_CHARACTERISTIC_UUID,
+      encodedMessage
+    );
+  } catch (error) {
+    console.error("Failed to write to characteristic:", error);
+  }
+};
+
 const downloadFile = async () => {
-  const fileUri = FileSystem.documentDirectory + "ble_data.json";
   try {
     // Ensure the file exists
     const fileInfo = await FileSystem.getInfoAsync(fileUri);
@@ -29,18 +49,16 @@ const downloadFile = async () => {
   }
 };
 
-const readDataFromFile = async () => {
-  try {
-    const data = await FileSystem.readAsStringAsync(fileUri);
-    console.log("Data from file:", JSON.parse(data));
-  } catch (error) {
-    console.error("Error reading data from file:", error);
-  }
-};
-
 const HomeScreen = (props: HomeProps) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { state } = useGlobalState();
+  const [isBroadcast, setIsBroadcast] = useState<Boolean>(false);
+
+  const handleBroadcast = async () => {
+    toggleMode(state.connectedDevice, isBroadcast);
+    setIsBroadcast(!isBroadcast);
+  };
 
   return (
     <View style={styles.container}>
@@ -64,6 +82,15 @@ const HomeScreen = (props: HomeProps) => {
       <TouchableOpacity onPress={downloadFile} style={styles.ctaButton}>
         <Text style={styles.ctaButtonText}>Export Saved Data</Text>
       </TouchableOpacity>
+      {state.connectedDevice && (
+        <TouchableOpacity onPress={handleBroadcast} style={styles.ctaButton}>
+          {!isBroadcast ? (
+            <Text style={styles.ctaButtonText}>Start Broadcast</Text>
+          ) : (
+            <Text style={styles.ctaButtonText}>Stop Broadcast</Text>
+          )}
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
