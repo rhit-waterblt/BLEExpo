@@ -2,6 +2,7 @@
   "expo": {
     "name": "StrapTech",
     "slug": "straptech",
+    "scheme": "straptech",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/straptechlogo.png",
@@ -38,7 +39,8 @@
           "modes": ["peripheral", "central"],
           "bluetoothAlwaysPermission": "Allow $(PRODUCT_NAME) to connect to bluetooth devices"
         }
-      ]
+      ],
+      "expo-router"
     ],
     "extra": {
       "eas": {
