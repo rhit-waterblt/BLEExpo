@@ -41,6 +41,7 @@ const BluetoothConnectionScreen = () => {
     allDevices,
     // connectedDevice,
     connectToDevice,
+    disconnectFromDevice,
     requestPermissions,
     scanForPeripherals,
   } = useBLE();
@@ -87,6 +88,12 @@ const BluetoothConnectionScreen = () => {
               <Text style={styles.heartRateTitleText}>
                 Connected to ESP32 Master
               </Text>
+              <TouchableOpacity
+                onPress={disconnectFromDevice}
+                style={styles.ctaButton}
+              >
+                <Text style={styles.ctaButtonText}>Disconnect from Master</Text>
+              </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleBroadcast}
                 style={styles.ctaButton}

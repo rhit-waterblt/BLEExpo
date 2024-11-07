@@ -1,5 +1,5 @@
 /* eslint-disable no-bitwise */
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback, useEffect, useRef } from "react";
 import { PermissionsAndroid, Platform } from "react-native";
 import { useGlobalState } from "../context/GlobalState";
 
@@ -20,13 +20,17 @@ const TENSION_CHARACTERISTIC_UUID = "3a8128a5-a58b-477a-bf68-8b0462524aa8";
 
 const bleManager = new BleManager();
 
-const fileUri = FileSystem.documentDirectory + "ble_data.json";
-
 function useBLE() {
   const [allDevices, setAllDevices] = useState<Device[]>([]);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
 
   const { state, dispatch } = useGlobalState();
+
+  const currFileNameRef = useRef(state.currentSaveFile);
+
+  useEffect(() => {
+    currFileNameRef.current = state.currentSaveFile;
+  }, [state.currentSaveFile]);
 
   const requestAndroid31Permissions = async () => {
     const bluetoothScanPermission = await PermissionsAndroid.request(
@@ -102,6 +106,29 @@ function useBLE() {
     }
   };
 
+  const _handleDisconnect = () => {
+    setConnectedDevice(null);
+
+    const updateConnectedDevice = (device: null) => {
+      dispatch({ type: "SET_CONNECTED_DEVICE", payload: device });
+    };
+
+    const clearStrapMacs = () => {
+      dispatch({ type: "CLEAR_STRAPMACS" });
+    };
+
+    clearStrapMacs();
+    updateConnectedDevice(null);
+  };
+
+  const disconnectFromDevice = () => {
+    if (connectedDevice) {
+      bleManager.cancelDeviceConnection(connectedDevice.id);
+
+      _handleDisconnect();
+    }
+  };
+
   const isDuplicteDevice = (devices: Device[], nextDevice: Device) =>
     devices.findIndex((device) => nextDevice.id === device.id) > -1;
 
@@ -129,6 +156,7 @@ function useBLE() {
     tension: number;
     timestamp: Date;
   }) => {
+    const fileUri = FileSystem.documentDirectory + currFileNameRef.current;
     try {
       const existingData = await FileSystem.readAsStringAsync(fileUri).catch(
         () => "[]"
@@ -142,50 +170,60 @@ function useBLE() {
     }
   };
 
-  const onDataUpdate = (
-    error: BleError | null,
-    characteristic: Characteristic | null
-  ) => {
-    if (error) {
-      console.log(error);
-      return;
-    } else if (!characteristic?.value) {
-      console.log("No Data was received");
-      return;
-    }
+  const onDataUpdate = useCallback(
+    (error: BleError | null, characteristic: Characteristic | null) => {
+      if (error) {
+        console.log(error.errorCode);
+        console.log(error);
 
-    const receivedString = Buffer.from(characteristic.value, "base64").toString(
-      "utf-8"
-    );
-    const [mac, tension] = receivedString.split(","); // Split by comma
-    const tensionNumber = parseInt(tension);
+        if (error.errorCode == 201) {
+          _handleDisconnect();
+        }
 
-    const updateStrapMacs = (mac: string, newTension: number) => {
-      dispatch({
-        type: "SET_STRAPMACS",
-        payload: { mac: mac, tension: newTension },
-      });
-    };
+        return;
+      } else if (!characteristic?.value) {
+        console.log("No Data was received");
+        return;
+      }
 
-    updateStrapMacs(mac, tensionNumber);
-    // Save the reading to device
-    saveDataToFile({ mac, tension: tensionNumber, timestamp: new Date() });
-  };
+      const receivedString = Buffer.from(
+        characteristic.value,
+        "base64"
+      ).toString("utf-8");
+      const [mac, tension] = receivedString.split(","); // Split by comma
+      const tensionNumber = parseInt(tension);
 
-  const startStreamingData = async (device: Device) => {
-    if (device) {
-      device.monitorCharacteristicForService(
-        DATA_SERVICE_UUID,
-        TENSION_CHARACTERISTIC_UUID,
-        onDataUpdate
-      );
-    } else {
-      console.log("No Device Connected");
-    }
-  };
+      const updateStrapMacs = (mac: string, newTension: number) => {
+        dispatch({
+          type: "SET_STRAPMACS",
+          payload: { mac: mac, tension: newTension },
+        });
+      };
+
+      updateStrapMacs(mac, tensionNumber);
+      saveDataToFile({ mac, tension: tensionNumber, timestamp: new Date() });
+    },
+    [dispatch]
+  );
+
+  const startStreamingData = useCallback(
+    async (device: Device) => {
+      if (device) {
+        device.monitorCharacteristicForService(
+          DATA_SERVICE_UUID,
+          TENSION_CHARACTERISTIC_UUID,
+          onDataUpdate
+        );
+      } else {
+        console.log("No Device Connected");
+      }
+    },
+    [onDataUpdate]
+  );
 
   return {
     connectToDevice,
+    disconnectFromDevice,
     allDevices,
     connectedDevice,
     requestPermissions,

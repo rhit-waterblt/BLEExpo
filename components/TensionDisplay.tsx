@@ -28,7 +28,7 @@ const TensionTile: React.FC<TensionTileProps> = ({
         width={200}
         color={progressColor}
       />
-      <Text style={styles.value}>{value}</Text>
+      <Text style={styles.value}>{value} lbs</Text>
     </View>
   );
 };

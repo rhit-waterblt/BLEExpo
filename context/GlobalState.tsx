@@ -5,11 +5,14 @@ type State = {
   connectedDevice: any;
   strapMACs: string[];
   tensions: number[];
+  currentSaveFile: string;
 };
 
 type Action =
   | { type: "SET_CONNECTED_DEVICE"; payload: any }
-  | { type: "SET_STRAPMACS"; payload: { mac: string; tension: number } };
+  | { type: "SET_STRAPMACS"; payload: { mac: string; tension: number } }
+  | { type: "CLEAR_STRAPMACS" }
+  | { type: "SET_CURRENT_SAVE_FILE"; payload: string };
 
 // Define the type for the context provider's props
 interface GlobalProviderProps {
@@ -20,6 +23,7 @@ const initialState: State = {
   connectedDevice: null,
   strapMACs: [],
   tensions: [],
+  currentSaveFile: "ble_data.json",
 };
 const GlobalContext = createContext<{
   state: State;
@@ -62,6 +66,11 @@ const reducer = (state: State, action: Action): State => {
         };
       }
     }
+    case "CLEAR_STRAPMACS":
+      return { ...state, strapMACs: [], tensions: [] };
+    case "SET_CURRENT_SAVE_FILE":
+      console.log("Setting current save file:", action.payload);
+      return { ...state, currentSaveFile: action.payload };
     default:
       return state;
   }
