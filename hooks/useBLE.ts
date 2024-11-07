@@ -108,6 +108,7 @@ function useBLE() {
 
   const _handleDisconnect = () => {
     setConnectedDevice(null);
+    setAllDevices([]);
 
     const updateConnectedDevice = (device: null) => {
       dispatch({ type: "SET_CONNECTED_DEVICE", payload: device });
