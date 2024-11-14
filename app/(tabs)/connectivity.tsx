@@ -99,9 +99,9 @@ const BluetoothConnectionScreen = () => {
                 style={styles.ctaButton}
               >
                 {!isBroadcast ? (
-                  <Text style={styles.ctaButtonText}>Start Broadcast</Text>
+                  <Text style={styles.ctaButtonText}>Begin Strap Pairing</Text>
                 ) : (
-                  <Text style={styles.ctaButtonText}>Stop Broadcast</Text>
+                  <Text style={styles.ctaButtonText}>Stop Strap Pairing</Text>
                 )}
               </TouchableOpacity>
             </>
@@ -117,9 +117,18 @@ const BluetoothConnectionScreen = () => {
           </TouchableOpacity>
         )}
         {state.strapMACs.length > 0 && (
-          <Text style={styles.heartRateTitleText}>
-            Connected to {state.strapMACs.length} Straps
-          </Text>
+          <ScrollView>
+            <Text style={styles.heartRateTitleText}>
+              Connected to {state.strapMACs.length} Straps
+            </Text>
+            <View style={styles.container}>
+              {state.strapMACs.map((mac, index) => (
+                <Text key={index} style={styles.heartRateText}>
+                  Strap {index + 1}: {mac}
+                </Text>
+              ))}
+            </View>
+          </ScrollView>
         )}
         <DeviceModal
           closeModal={hideModal}
@@ -137,6 +146,8 @@ const styles = StyleSheet.create({
     flex: 1,
     // marginTop: StatusBar.currentHeight,
     backgroundColor: "#f2f2f2",
+    // justifyContent: "center",
+    alignItems: "center",
   },
   heartRateTitleWrapper: {
     flex: 1,
@@ -155,6 +166,10 @@ const styles = StyleSheet.create({
     fontSize: 25,
     marginTop: 15,
   },
+  strapText: {
+    fontSize: 25,
+    marginTop: 15,
+  },
   ctaButton: {
     backgroundColor: "#eaab2d",
     justifyContent: "center",
@@ -162,11 +177,13 @@ const styles = StyleSheet.create({
     height: 50,
     marginHorizontal: 20,
     marginBottom: 5,
+    marginTop: 5,
     borderRadius: 8,
   },
   ctaButtonText: {
     fontSize: 18,
     fontWeight: "bold",
     color: "white",
+    marginHorizontal: 20,
   },
 });
